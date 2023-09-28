@@ -56,12 +56,12 @@ class ModelTests(TestCase):
             'testpass123',
         )
         book = models.Book.objects.create(
-            user = user,
-            title = 'test title',
-            author = 'test author',
+            user=user,
+            title='test title',
+            author='test author',
             description='sample book description',
-            available = True,
-            pickup_location = 'test location',
+            available=True,
+            pickup_location='test location',
         )
 
         self.assertEqual(str(book), book.title)
