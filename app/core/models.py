@@ -56,6 +56,8 @@ class Book(models.Model):
     description = models.TextField(blank=True)
     available = models.BooleanField(default=True)
     pickup_location = models.CharField(max_length=255)
+    condition = models.CharField(max_length=255, null=True)
+    image = models.CharField(max_length=255, null=True) # for images URL.
 
     def __str__(self):
         return self.title

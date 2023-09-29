@@ -13,6 +13,6 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = [
             'id', 'title', 'author', 'description',
-            'available', 'pickup_location',
+            'available', 'pickup_location', 'condition', 'image',
         ]
         read_only_fields = ['id']
