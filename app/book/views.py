@@ -4,7 +4,10 @@ Views for the book APIs
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from core.models import Book
 from book import serializers
 
@@ -22,6 +25,7 @@ class BookViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new recipe."""
         serializer.save(user=self.request.user)
+
 
 class UserBooksListView(ListAPIView):
     serializer_class = serializers.BookSerializer

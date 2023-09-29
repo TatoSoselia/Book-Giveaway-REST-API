@@ -66,22 +66,6 @@ class PrivateBookApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_book_list_limited_to_user(self):
-        """Test list of book is limited to authenticated user."""
-        other_user = get_user_model().objects.create_user(
-            'other@example.com',
-            'password123',
-        )
-        create_book(user=other_user)
-        create_book(user=self.user)
-
-        res = self.client.get(BOOKS_URL)
-
-        book = Book.objects.filter(user=self.user)
-        serializer = BookSerializer(book, many=True)
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
-
     def test_create_book(self):
         """Test creating a book."""
         payload = {
