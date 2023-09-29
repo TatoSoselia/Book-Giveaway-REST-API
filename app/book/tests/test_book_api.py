@@ -54,7 +54,7 @@ class PrivateBookApiTests(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-    def test_retrieve_recipes(self):
+    def test_retrieve_books(self):
         """Test retrieving a list of book."""
         create_book(user=self.user)
         create_book(user=self.user)
@@ -67,7 +67,7 @@ class PrivateBookApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_book_list_limited_to_user(self):
-        """Test list of recipes is limited to authenticated user."""
+        """Test list of book is limited to authenticated user."""
         other_user = get_user_model().objects.create_user(
             'other@example.com',
             'password123',
@@ -77,7 +77,25 @@ class PrivateBookApiTests(TestCase):
 
         res = self.client.get(BOOKS_URL)
 
-        recipes = Book.objects.filter(user=self.user)
-        serializer = BookSerializer(recipes, many=True)
+        book = Book.objects.filter(user=self.user)
+        serializer = BookSerializer(book, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_book(self):
+        """Test creating a book."""
+        payload = {
+            'title': 'test Book Title',
+            'author': 'test Author Name',
+            'description': 'test Description of the book',
+            'available': True,
+            'pickup_location': 'test Location',
+
+        }
+        res = self.client.post(BOOKS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        book = Book.objects.get(id=res.data['id'])
+        for k, v in payload.items():
+            self.assertEqual(getattr(book, k), v)
+        self.assertEqual(book.user, self.user)
