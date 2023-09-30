@@ -73,7 +73,7 @@ class BookViewSet(viewsets.ModelViewSet):
         if author:
             queryset = queryset.filter(Q(author=author))
         if genre:
-            queryset = queryset.filter(Q(genre=genre))
+            queryset = queryset.filter(genres__name__icontains=genre)
         if condition:
             queryset = queryset.filter(Q(condition=condition))
         if location:
