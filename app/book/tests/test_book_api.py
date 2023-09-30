@@ -24,6 +24,8 @@ def create_book(user, **params):
         'description': 'sample description for book',
         'available': True,
         'location': 'test pickup_location',
+        'condition': 'good',
+        'image': 'testbook.jpg',
     }
     defaults.update(params)
 
