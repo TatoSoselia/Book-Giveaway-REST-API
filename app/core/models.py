@@ -58,6 +58,14 @@ class Book(models.Model):
     location = models.CharField(max_length=255)
     condition = models.CharField(max_length=255, null=True)
     image = models.CharField(max_length=255, null=True)  # for images URL.
+    genres = models.ManyToManyField('Genre')
 
     def __str__(self):
         return self.title
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
