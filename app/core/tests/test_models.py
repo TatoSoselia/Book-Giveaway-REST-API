@@ -61,7 +61,7 @@ class ModelTests(TestCase):
             author='test author',
             description='sample book description',
             available=True,
-            pickup_location='test location',
+            location='test location',
             image='test/url/14424452',
             condition='new',
         )

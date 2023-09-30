@@ -23,7 +23,7 @@ def create_book(user, **params):
         'author': 'test auth',
         'description': 'sample description for book',
         'available': True,
-        'pickup_location': 'test pickup_location',
+        'location': 'test pickup_location',
     }
     defaults.update(params)
 
@@ -73,7 +73,7 @@ class PrivateBookApiTests(TestCase):
             'author': 'test Author Name',
             'description': 'test Description of the book',
             'available': True,
-            'pickup_location': 'test Location',
+            'location': 'test Location',
 
         }
         res = self.client.post(BOOKS_URL, payload)

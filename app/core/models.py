@@ -57,7 +57,7 @@ class Book(models.Model):
     available = models.BooleanField(default=True)
     location = models.CharField(max_length=255)
     condition = models.CharField(max_length=255, null=True)
-    image = models.CharField(max_length=255, null=True) # for images URL.
+    image = models.CharField(max_length=255, null=True)  # for images URL.
 
     def __str__(self):
         return self.title
