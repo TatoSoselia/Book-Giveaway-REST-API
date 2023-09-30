@@ -74,12 +74,21 @@ class PrivateBookApiTests(TestCase):
             'description': 'test Description of the book',
             'available': True,
             'location': 'test Location',
-
+            "genres": [
+                {"name": "Genre1"},
+                {"name": "Genre2"}
+            ],
         }
-        res = self.client.post(BOOKS_URL, payload)
-
+        res = self.client.post(BOOKS_URL, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         book = Book.objects.get(id=res.data['id'])
         for k, v in payload.items():
-            self.assertEqual(getattr(book, k), v)
+            if k == 'genres':
+                genre_names = [genre['name'] for genre in payload['genres']]
+                self.assertEqual(
+                    list(book.genres.values_list('name', flat=True)),
+                    genre_names,
+                )
+            else:
+                self.assertEqual(getattr(book, k), v)
         self.assertEqual(book.user, self.user)
