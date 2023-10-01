@@ -69,3 +69,13 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BookInterest(models.Model):
+    """For Managing Book Requests and Owner Decisions"""
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    interested_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='book_interests')
+    chosen_by_owner = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.interested_user.name} interested in '{self.book.title}'"
