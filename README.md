@@ -67,3 +67,15 @@ http://127.0.0.1:8000/api/docs/
 ```
 
 Here, you will find extensive information about API endpoints, their functionalities, and detailed usage instructions.
+
+## Testing
+To ensure the reliability and functionality of this project, use testing. You can run the tests the following command via Docker Compose:
+```sh
+docker-compose run --rm app sh -c "python manage.py test"
+```
+
+## Linting
+Linting is important for maintaining code quality and consistency. We use flake8 for linting. You can run the linting checks with the following command:
+```sh
+docker-compose run --rm app sh -c "flake8"
+```
