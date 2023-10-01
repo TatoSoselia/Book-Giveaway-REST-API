@@ -1,6 +1,7 @@
 """
 Database models.
 """
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -42,3 +43,43 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+class Book(models.Model):
+    """Book object."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    available = models.BooleanField(default=True)
+    location = models.CharField(max_length=255)
+    condition = models.CharField(max_length=255, null=True)
+    image = models.CharField(max_length=255, null=True)  # for images URL.
+    genres = models.ManyToManyField('Genre')
+
+    def __str__(self):
+        return self.title
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class BookInterest(models.Model):
+    """For Managing Book Requests and Owner Decisions"""
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    interested_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='book_interests'
+    )
+    chosen_by_owner = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.interested_user.name} interested in '{self.book.title}'"
