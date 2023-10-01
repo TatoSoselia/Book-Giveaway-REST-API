@@ -19,4 +19,14 @@ app_name = 'book'
 urlpatterns = [
     path('', include(router.urls)),
     path('my-books/', views.UserBooksListView.as_view(), name='my-books'),
+    path(
+        'book-interests/',
+        views.BookInterestListCreateView.as_view(),
+        name='book-interest-list-create'
+    ),
+    path(
+        'book-interests/<int:pk>/choose-recipient/',
+        views.BookInterestUpdateView.as_view(),
+        name='choose-recipient'
+    ),
 ]

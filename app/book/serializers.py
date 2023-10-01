@@ -6,6 +6,7 @@ from rest_framework import serializers
 from core.models import (
     Book,
     Genre,
+    BookInterest,
 )
 
 
@@ -43,3 +44,21 @@ class BookSerializer(serializers.ModelSerializer):
             book.genres.add(genre)  # Add the genre to the book
 
         return book
+
+
+class OwnerBookInterestSerializer(serializers.ModelSerializer):
+    """Serializer for book interests (for book owners)."""
+
+    class Meta:
+        model = BookInterest
+        fields = ['id', 'book', 'interested_user', 'chosen_by_owner']
+        read_only_fields = ['id', 'interested_user', 'book']
+
+
+class UserBookInterestSerializer(serializers.ModelSerializer):
+    """Serializer for book interests (for interested users)."""
+
+    class Meta:
+        model = BookInterest
+        fields = ['id', 'book',]
+        read_only_fields = ['id']

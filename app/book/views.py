@@ -2,7 +2,11 @@
 Views for the book APIs
 """
 from rest_framework import viewsets, permissions
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    UpdateAPIView,
+)
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -15,15 +19,24 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiTypes,
 )
-from core.models import Book
+from core.models import Book, BookInterest
 from book import serializers
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    """custom permission to only allow owners to edit their own objects."""
+    def has_object_permission(self, request, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.user == request.user
+
+
+class IsOwnerForBook(permissions.BasePermission):
+    """Custom permission to only allow owners to edit book-related objects."""
+    def has_object_permission(self, request, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.book.user == request.user
 
 
 @extend_schema_view(
@@ -53,6 +66,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     )
 )
 class BookViewSet(viewsets.ModelViewSet):
+    """Manage book."""
     serializer_class = serializers.BookSerializer
     queryset = Book.objects.all()
     authentication_classes = [TokenAuthentication]
@@ -86,6 +100,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 class UserBooksListView(ListAPIView):
+    """API endpoint for listing books owned by the authenticated user."""
     serializer_class = serializers.BookSerializer
     queryset = Book.objects.all()
     authentication_classes = [TokenAuthentication]
@@ -93,3 +108,35 @@ class UserBooksListView(ListAPIView):
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).order_by('-id')
+
+
+class BookInterestListCreateView(ListCreateAPIView):
+    """API endpoint for listing and creating book interests."""
+    queryset = BookInterest.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            # For creating book interests, use UserBookInterestSerializer
+            return serializers.UserBookInterestSerializer
+        else:
+            # For listing book interests, use OwnerBookInterestSerializer
+            return serializers.OwnerBookInterestSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(interested_user=self.request.user)
+
+    def get_queryset(self):
+        return self.queryset.filter(book__user=self.request.user).order_by('-id')  # noqa: E501
+
+
+class BookInterestUpdateView(UpdateAPIView):
+    """API endpoint for updating book interests."""
+    queryset = BookInterest.objects.all()
+    serializer_class = serializers.OwnerBookInterestSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsOwnerForBook]
+
+    def perform_update(self, serializer):
+        serializer.save(chosen_by_owner=True)
